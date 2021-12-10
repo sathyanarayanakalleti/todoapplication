@@ -5,6 +5,7 @@ const sqlite3 = require("sqlite3");
 app.use(express.json());
 var format = require("date-fns/format");
 var isMatch = require("date-fns/isMatch");
+var isValid = require("date-fns/isValid");
 const path = require("path");
 let dbpath = path.join(__dirname, "todoApplication.db");
 let db;
@@ -150,6 +151,7 @@ let checking2 = (request, response, next) => {
 let checking3 = (request, response, next) => {
   switch (true) {
     case request.body["todo"] !== undefined:
+      request.todo = request.body["todo"];
       next();
       break;
     case request.body["status"] !== undefined:
@@ -194,7 +196,8 @@ let checking3 = (request, response, next) => {
     case request.body["dueDate"] !== undefined:
       try {
         let duedate2 = format(new Date(request.body["dueDate"]), "yyyy-MM-dd");
-        request.due_date = duedate2;
+
+        request.dueDate = duedate2;
         next();
       } catch (e) {
         response.status(400);
@@ -245,7 +248,7 @@ app.post("/todos/", checking2, async (request, response) => {
     '${status}',
     '${dueDate}');`;
   await db.run(todonewQuery);
-  console.log(dueDate);
+  console.log(todo);
   response.send("Todo Successfully Added");
 });
 //API5
@@ -271,24 +274,25 @@ app.put("/todos/:todoId/", checking3, async (request, response) => {
       break;
   }
   let pretodoQuery = `select * from todo where id='${todoId}';`;
-
+  const pretodo = await db.get(pretodoQuery);
   let {
-    todo = pretodoQuery.todo,
-    priority = pretodoQuery.priority,
-    status = pretodoQuery.status,
-    category = pretodoQuery.category,
-    due_date = pretodoQuery.due_date,
+    todo = pretodo.todo,
+    category = pretodo.category,
+    priority = pretodo.priority,
+    status = pretodo.status,
+    dueDate = pretodo.due_date,
   } = request;
 
   let updtoda = `update todo set
    todo='${todo}',
+    category='${category}',
     priority='${priority}',
-   category='${category}',
     status='${status}', 
-    due_date='${due_date}'
+    due_date='${dueDate}'
   where id='${todoId}';`;
 
   await db.run(updtoda);
+
   response.send(`${updateCol} Updated`);
 });
 //API6

@@ -19,7 +19,7 @@ GET http://www.localhost:3000/todos/?category=LEARNING&priority=HIGH
 GET http://www.localhost:3000/todos/?search_q=Buy
 
 ### 
-GET http://www.localhost:3000/todos/3/
+GET http://www.localhost:3000/todos/9/
 
 ### 
 GET http://www.localhost:3000/agenda/
@@ -44,3 +44,29 @@ Content-Type: application/json
    {
   "status": "TO DO"
 }
+
+###
+PUT http://www.localhost:3000/todos/9/
+Content-Type: application/json
+
+{
+  "dueDate": "2021-1-12"
+}
+###
+PUT http://www.localhost:3000/todos/9/
+Content-Type: application/json
+
+{
+   "category":"WORK"
+}
+
+###
+PUT http://www.localhost:3000/todos/9/
+Content-Type: application/json
+
+{
+    "todo":"Clean the garden"
+}
+
+###
+DELETE  http://www.localhost:3000/todos/9/
